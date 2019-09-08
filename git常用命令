@@ -1,0 +1,132 @@
+常见的git命令
+1.查看git是否安装<Linux> 命令：git
+2.git安装  
+	sudo apt-get install git 
+	也可以通过解压缩包，然后依次输入  ./config，make，sudo make install这三个命令
+3.初始化配置用户名，邮箱
+	git config --global user.name "your name"
+	git config --global user.email "email@qq.com"
+	
+4.创建版本库	
+	mkdir gitlearning
+	cd gitlearning 
+	git init   <把这个目录变成git可以管理的>
+	git add readme.txt <把这个文件添加到版本库>
+	git commit -m "first commit"  <第一次把文件添加到仓库>
+5.时光穿梭机
+	git status  <时刻掌握仓库当前的状态>
+	git diff <查看两次修改的不同之处>
+6.版本回退
+	比方现在已经提交了三个版本了，三次的message分别是
+	-m "wrote a readme file"
+	-m "add distributed"
+	-m "append GPL"  <HEAD->master>
+	
+	可以使用git log命令查看历史的提交
+	其中commit id是一个SHA1值，但是git log显示的信息是比较多的
+	可以使用git log --pretty=oneline
+	git 用HEAD表示当前版本，上一个版本就是HEAD^,再上面一个版本是HEAD^^
+	当然上面的100个版本是HEAD~100
+	
+	回退到上一个版本 git reset --hard HEAD^
+	此时再git log只能看到两个版本了 append GPL不见了
+	只要此时还有append GPL的版本号  假设叫aaa
+	使用git reset --hard aaa 即可回退
+	
+	git内部有指向当前版本的指针的HEAD，版本回退仅仅只是把指针指向另外版本
+	关掉电脑之后找不到版本号了 git reflog  记录每一次的命令
+	
+	git diff 比较的是工作区文件与暂存区文件的区别（上次git add 的内容） 
+	git diff --cached 比较的是暂存区的文件与仓库分支里（上次git commit 后的内容）的区别
+	
+7. 工作区和暂存区
+	工作区：现有目录
+	版本库<repository> : .git 隐藏目录，包括暂存区<stage>和当前分支
+	git add是把文件修改添加到暂存区
+	git commit是把暂存区的内容添加到当前分支
+	
+8. 管理修改
+	如果连续使用两次git add，相当于两次的修改合并了
+	
+9. 撤销修改
+	git checkout --readme.txt
+	如果文件修改之后没有放到暂存区，撤销修改就回退到版本库一个状态
+	如果文件修改之后已经添加到了暂存区，又做了修改，就会回退到暂存区的状态
+	总之，会回到最近一次git commit或git add的状态
+	如果修改后的文件已经添加到暂存区，想丢弃修改
+	git reset HEAD readme.txt 把暂存区的修改撤掉，回到工作区
+	
+10. 删除文件
+	git rm 工作区删除了文件，版本库也要删除就用这个命令
+	git checkout --test.txt 把版本库里的版本替换工作区的版本
+	
+11. 添加远程库
+	把本地库和远端的库关联
+	git remote add origin git@github.com:jack/learning.git
+	第一次推送本地到远端
+	git push -u origin master
+	第一次推送master分支的时候， -u会把本地的master分支推送到远程新的master分支
+	还会把本地的master分支和远程的master分支进行关联
+	以后只需要git push origin master 就可以了
+	
+12. 生成SSH公钥
+	ssh-keygen
+	
+13. 分支管理
+	① 创建和合并分支
+    git checkout -b dev
+	相当于 git branch dev ++ git checkout dev
+	当前工作是在dev分支上开发的
+	切换回master分支 git merge dev
+	就把dev分支上修改的合到了master，其实也就是master的指针指向了dev
+	git branch -d dev 删除dev分支
+	②解决冲突
+	feature分支上和master分支上同时修改了某一行，这时候merge的时候就会出现冲突
+	git status查看冲突文件的状态，手动修改冲突行
+	git add readme.txt
+	git commit -m "fixed conflict"  提交一次即可解决
+	git log --graph --pretty=oneline --abbrev-commit  查看分支合并图
+	
+14. 多人协作
+    现在要在dev分支上面开发，就必须创建远程的origin的dev分支到本地
+	git checkout -b dev origin/dev
+	你修改了之后想向origin/dev分支进行提交，但是你的小伙伴已经推送了东西
+	出现了冲突 直接git pull
+	但是此时你没有指定本地dev分支与远程origin/dev分支的连接
+	git branch --set-upstream-to=origin/dev dev
+	git pull成功，但是出现了冲突，可能同时修改了一个地方，需要手动修改之后
+	git commit 再git push
+	
+15. git rebase的作用<有用>
+	在和远程分支同步之后，对hello.py进行两次提交，按照原来的，必须要先git pull
+	一下，合并别人的更新，然后再git push
+	现在可以使用git --rebase直接就基于最新的远程库进行提交，把我们最新的修改放到了远程库之后
+	
+	git pull -> git --rebase -> git push
+	
+16. git的配置文件在.git/config文件之下	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
