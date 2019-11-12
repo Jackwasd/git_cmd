@@ -1,4 +1,4 @@
-11常见的git命令
+21常见的git命令
 1.查看git是否安装<Linux> 命令：git
 2.git安装  
 	sudo apt-get install git 
